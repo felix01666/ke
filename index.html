@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ia Products</title>
+
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=YOUR_TRACKING_ID"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "YOUR_TRACKING_ID");
+    </script>
+    <!-- End Google Analytics -->
+
+    <style>
+      /* General Styles */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh; /* Ensure the body takes at least the full height of the viewport */
+        background-color: #f0f0f0;
+      }
+
+      /* Dashboard Styles */
+      .dashboard {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .dashboard-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+      }
+
+      .dashboard-left {
+        display: flex;
+        align-items: center;
+      }
+
+      .dashboard-image {
+        height: 60px;
+        margin-right: 10px;
+      }
+
+      .dashboard-right {
+        text-align: right;
+      }
+
+      .shop-now-btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      .shop-now-btn:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        width: 250px;
+        background-color: #333;
+        color: white;
+        padding: 20px;
+        height: calc(
+          100vh - 80px
+        ); /* Adjust height to account for fixed header */
+        position: fixed;
+        left: 0;
+        top: 80px;
+        overflow-y: auto;
+      }
+
+      .sidebar h2 {
+        text-align: center;
+      }
+
+      .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .sidebar ul li {
+        padding: 10px;
+        margin: 10px 0;
+        background-color: #444;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      .sidebar ul li:hover {
+        background-color: #555;
+      }
+
+      /* Button Styles */
+      .cart-btn,
+      .add-product-btn {
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin-top: 20px;
+        text-align: center;
+        cursor: pointer;
+        display: block;
+        width: 100%;
+        border: none;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      .cart-btn {
+        background-color: #007bff;
+      }
+
+      .cart-btn:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+      }
+
+      .add-product-btn {
+        background-color: #4caf50;
+      }
+
+      .add-product-btn:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+      }
+
+      /* Main Content Area */
+      .main-content {
+        margin-left: 250px; /* Sidebar width */
+        padding: 20px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        overflow-y: auto;
+        flex-grow: 1;
+        margin-top: 80px; /* Account for header */
+      }
+
+      /* Product Cards */
+      .product-card {
+        background-color: #f4f4f4;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .product-card img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 5px;
+      }
+
+      .product-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Modal Styles */
+      #addProductModal,
+      #cartModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+        color: white;
+      }
+
+      #addProductModal .modal-content,
+      #cartModal .modal-content {
+        background-color: #333;
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        text-align: center;
+      }
+
+      /* Footer Styles */
+      footer {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        margin-top: auto; /* Makes footer always stick to the bottom */
+      }
+
+      /* Styles for cart items */
+      #cartItemsList {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      #cartItemsList li {
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Dashboard -->
+    <header class="dashboard">
+      <div class="dashboard-content">
+        <div class="dashboard-left">
+          <img
+            src="images/img6.jpg"
+            alt="Business Image"
+            class="dashboard-image"
+          />
+          <p>These are fresh, chemical free. Ksh 60 each</p>
+        </div>
+        <div class="dashboard-right">
+          <h1>Ia</h1>
+          <a href="#" class="shop-now-btn" onclick="displayProducts()"
+            >Shop Now</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>Products</h2>
+      <button class="cart-btn" onclick="openCartModal()" id="cartButton">
+        Go to Cart - KSh 0
+      </button>
+      <ul id="product-list">
+        <li onclick="showProduct(1)">Banana, strawberry, vanilla</li>
+        <li onclick="showProduct(2)">Vanilla, pineapple purple</li>
+        <li onclick="showProduct(3)">Vanilla</li>
+        <li onclick="showProduct(4)">Vanilla strawberry</li>
+        <li onclick="showProduct(5)">Strawberry</li>
+      </ul>
+      <button class="add-product-btn" onclick="openModal()">Add Product</button>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent"></div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal">
+      <div class="modal-content">
+        <h2>Your Cart</h2>
+        <ul class="cart-items" id="cartItemsList"></ul>
+        <button onclick="placeOrder()">Place Order</button>
+        <button onclick="closeCartModal()">Close</button>
+      </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="addProductModal">
+      <div class="modal-content">
+        <h2>Add a New Product</h2>
+        <form id="product-form">
+          <label for="productName">Product Name:</label>
+          <input type="text" id="productName" required /><br /><br />
+          <label for="productDescription">Product Description:</label>
+          <input type="text" id="productDescription" required /><br /><br />
+          <label for="productPrice">Product Price:</label>
+          <input type="number" id="productPrice" required /><br /><br />
+          <label for="productImage">Product Image URL:</label>
+          <input type="url" id="productImage" required /><br /><br />
+          <button type="submit">Add Product</button>
+          <button type="button" onclick="closeModal()">Cancel</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      © 2024 Ia Created by FOyuga. All rights reserved.
+      <p>
+        Contact me:
+        <a href="mailto:oyugafelix52@gmail.com">oyugafelix52@gmail.com</a>
+      </p>
+    </footer>
+
+    <script>
+      let products = [
+        {
+          id: 1,
+          name: "Banana, strawberry, vanilla",
+          price: 60,
+          description:
+            "Enjoy our tropical treat: smooth, chemical free vanilla yogurt paired with a bright, tangy layer of pineapple. This 300ml cup provides a refreshing and satisfying snack for any time of the day.",
+          image: "images/img1.jpg",
+        },
+        {
+          id: 2,
+          name: "Vanilla, pineapple purple",
+          price: 60,
+          description:
+            "Trio of flavors with our vibrant mixed yogurt: creamy vanilla blended with sweet pineapple and a burst of purple berry. This colorful, chemical-free treat delivers a refreshing and smooth combination in every spoonful.",
+          image: "images/img2.jpg",
+        },
+        {
+          id: 3,
+          name: "Vanilla",
+          price: 60,
+          description:
+            "Delight in the smooth richness of our fresh, chemical free vanilla yogurt. Perfectly balanced, it is a satisfying treat on its own or with your favorite toppings.",
+          image: "images/img3.jpg",
+        },
+        {
+          id: 4,
+          name: "Vanilla strawberry",
+          price: 60,
+          description:
+            "Relish the perfect pairing of flavors with our layered treat: silky vanilla yogurt topped with a vibrant strawberry layer. Fresh and chemical-free, it delivers a delightful and refreshing taste in every bite.",
+          image: "images/img4.jpg",
+        },
+        {
+          id: 5,
+          name: "Strawberry",
+          price: 60,
+          description:
+            "Dual-layered delight: creamy vanilla yogurt crowned with a vibrant strawberry swirl. This fresh, chemical free treat combines classic vanilla and sweet-tart strawberries for a refreshing indulgence in every bite.",
+          image: "images/img5.jpg",
+        },
+      ];
+
+      let cart = [];
+
+      function displayProducts() {
+        const mainContent = document.getElementById("mainContent");
+        mainContent.innerHTML = ""; // Clear previous products
+
+        products.forEach((product) => {
+          const productCard = document.createElement("div");
+          productCard.className = "product-card";
+          productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p class="price">KSh ${product.price}</p>
+                    <button onclick="addToCart(${product.id}, '${product.name}', ${product.price})">Add to Cart</button>
+                `;
+          mainContent.appendChild(productCard);
+        });
+      }
+
+      function showProduct(id) {
+        const product = products.find((p) => p.id === id);
+        const mainContent = document.getElementById("mainContent");
+        mainContent.innerHTML = `
+                <div class="product-card">
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p class="price">KSh ${product.price}</p>
+                    <button onclick="addToCart(${product.id}, '${product.name}', ${product.price})">Add to Cart</button>
+                </div>
+            `;
+      }
+
+      function addToCart(id, name, price) {
+        cart.push({ id, name, price });
+        alert(`${name} added to cart.`);
+        updateCartButton();
+      }
+
+      function updateCartButton() {
+        const totalPrice = cart.reduce((acc, item) => acc + item.price, 0);
+        const cartButton = document.getElementById("cartButton");
+        cartButton.innerHTML = `Go to Cart - KSh ${totalPrice}`;
+      }
+
+      function openCartModal() {
+        document.getElementById("cartModal").style.display = "flex";
+        updateCart();
+      }
+
+      function updateCart() {
+        const cartItemsList = document.getElementById("cartItemsList");
+        cartItemsList.innerHTML = "";
+        cart.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = `${item.name} - KSh ${item.price}`;
+          cartItemsList.appendChild(li);
+        });
+      }
+
+      function closeCartModal() {
+        document.getElementById("cartModal").style.display = "none";
+      }
+
+      function placeOrder() {
+        if (cart.length === 0) {
+          alert("Your cart is empty!");
+          return;
+        }
+
+        let message = "I would like to place an order:\n\n";
+        cart.forEach((item) => {
+          message += `${item.name} - KSh ${item.price}\n`;
+        });
+
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+          message
+        )}`;
+        window.open(whatsappUrl, "_blank");
+      }
+
+      function openModal() {
+        document.getElementById("addProductModal").style.display = "flex";
+      }
+
+      function closeModal() {
+        document.getElementById("addProductModal").style.display = "none";
+      }
+
+      document
+        .getElementById("product-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const name = document.getElementById("productName").value;
+          const description =
+            document.getElementById("productDescription").value;
+          const price = parseFloat(
+            document.getElementById("productPrice").value
+          );
+          const image = document.getElementById("productImage").value;
+
+          const newProduct = {
+            id: products.length + 1,
+            name,
+            description,
+            price,
+            image,
+          };
+
+          products.push(newProduct);
+          displayProducts();
+          closeModal();
+        });
+
+      window.onload = function () {
+        displayProducts();
+      };
+    </script>
+  </body>
+</html>
